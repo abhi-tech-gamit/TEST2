@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lyrics Collection</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4a6fa5;
+            --secondary-color: #6c757d;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --text-color: #333;
+            --bg-color: #fff;
+            --sidebar-bg: #f1f5f9;
+            --border-color: #dee2e6;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] {
+            --primary-color: #6c9bd1;
+            --secondary-color: #adb5bd;
+            --light-color: #343a40;
+            --dark-color: #f8f9fa;
+            --text-color: #e9ecef;
+            --bg-color: #212529;
+            --sidebar-bg: #2c3136;
+            --border-color: #495057;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: var(--transition);
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .sidebar {
+            width: 300px;
+            background-color: var(--sidebar-bg);
+            padding: 1.5rem;
+            border-right: 1px solid var(--border-color);
+            overflow-y: auto;
+            height: calc(100vh - 70px);
+            position: fixed;
+            left: 0;
+            top: 70px;
+            transition: var(--transition);
+        }
+
+        .search-container {
+            margin-bottom: 1.5rem;
+        }
+
+        .search-container input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        .categories, .song-list {
+            margin-bottom: 2rem;
+        }
+
+        .categories h3, .song-list h3 {
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+
+        .categories ul, .song-list ul {
+            list-style: none;
+        }
+
+        .categories ul li, .song-list ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .categories ul li a, .song-list ul li a {
+            color: var(--text-color);
+            text-decoration: none;
+            display: block;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+
+        .categories ul li a:hover, .song-list ul li a:hover, .categories ul li a.active, .song-list ul li a.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        main {
+            flex: 1;
+            margin-left: 300px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .song-container {
+            flex: 1;
+            background-color: var(--bg-color);
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 1rem;
+            overflow-y: auto;
+        }
+
+        .welcome-message {
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .welcome-message h2 {
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .lyrics-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .lyrics-container h2 {
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .lyrics-container .artist {
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+        }
+
+        .lyrics-content {
+            line-height: 2;
+            font-size: 1.1rem;
+        }
+
+        .chord-line {
+            color: var(--primary-color);
+            font-weight: bold;
+            font-family: monospace;
+            letter-spacing: 0.1em;
+            min-height: 1.5rem;
+        }
+
+        .lyric-line {
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-line {
+            height: 1rem;
+        }
+
+        .transpose-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            background-color: var(--sidebar-bg);
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+
+        .key-display {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            overflow: auto;
+        }
+
+        .modal-content {
+            background-color: var(--bg-color);
+            margin: 5% auto;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: var(--shadow);
+        }
+
+        .close {
+            color: var(--secondary-color);
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: var(--text-color);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background-color: var(--light-color);
+            color: var(--text-color);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .admin-badge {
+            background-color: #28a745;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
+        }
+
+        .setup-message {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 250px;
+            }
+            
+            main {
+                margin-left: 250px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                top: 0;
+                left: 0;
+            }
+            
+            main {
+                margin-left: 0;
+            }
+            
+            .transpose-controls {
+                flex-wrap: wrap;
+            }
+        }
+
+        @media (max-width: 576px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .controls {
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            
+            .modal-content {
+                margin: 10% auto;
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <h1><i class="fas fa-music"></i> Lyrics Collection</h1>
+            </div>
+            <div class="controls">
+                <button id="addSongBtn" class="btn" style="display: none;"><i class="fas fa-plus"></i> Add Song</button>
+                <button id="adminLoginBtn" class="btn"><i class="fas fa-user-shield"></i> Admin Login</button>
+                <button id="themeToggle" class="btn"><i class="fas fa-moon"></i></button>
+            </div>
+        </header>
+
+        <div class="sidebar">
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Search songs...">
+            </div>
+            <div class="categories">
+                <h3>Categories</h3>
+                <ul>
+                    <li><a href="#" data-category="all">All Songs</a></li>
+                    <li><a href="#" data-category="worship">Worship</a></li>
+                    <li><a href="#" data-category="rock">Rock</a></li>
+                    <li><a href="#" data-category="pop">Pop</a></li>
+                    <li><a href="#" data-category="country">Country</a></li>
+                </ul>
+            </div>
+            <div class="song-list">
+                <h3>Songs</h3>
+                <ul id="songList">
+                    <!-- Songs will be populated here -->
+                </ul>
+            </div>
+        </div>
+
+        <main>
+            <div class="song-container">
+                <div id="songContent">
+                    <div class="welcome-message">
+                        <h2>Welcome to Lyrics Collection</h2>
+                        <p>Select a song from the list to view lyrics and chords</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="transpose-controls">
+                <button id="transposeDown" class="btn"><i class="fas fa-minus"></i> Transpose Down</button>
+                <div class="key-display">
+                    <span>Current Key:</span> <span id="currentKey">C</span>
+                </div>
+                <button id="transposeUp" class="btn"><i class="fas fa-plus"></i> Transpose Up</button>
+                <button id="resetKey" class="btn"><i class="fas fa-undo"></i> Reset</button>
+                <button id="downloadPDF" class="btn"><i class="fas fa-file-pdf"></i> Download PDF</button>
+            </div>
+        </main>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div id="adminLoginModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Admin Login</h2>
+            <div id="setupMessage" class="setup-message" style="display: none;">
+                No admin account found. Please create one below.
+            </div>
+            <form id="adminLoginForm">
+                <div class="form-group">
+                    <label for="adminUsername">Username</label>
+                    <input type="text" id="adminUsername" required>
+                </div>
+                <div class="form-group">
+                    <label for="adminPassword">Password</label>
+                    <input type="password" id="adminPassword" required>
+                </div>
+                <button type="submit" class="btn">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add/Edit Song Modal -->
+    <div id="songModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle">Add New Song</h2>
+            <form id="songForm">
+                <div class="form-group">
+                    <label for="songTitle">Title</label>
+                    <input type="text" id="songTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="songArtist">Artist</label>
+                    <input type="text" id="songArtist" required>
+                </div>
+                <div class="form-group">
+                    <label for="songCategory">Category</label>
+                    <select id="songCategory">
+                        <option value="worship">Worship</option>
+                        <option value="rock">Rock</option>
+                        <option value="pop">Pop</option>
+                        <option value="country">Country</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="songKey">Original Key</label>
+                    <select id="songKey">
+                        <option value="A">A</option>
+                        <option value="A#">A#</option>
+                        <option value="B">B</option>
+                        <option value="C">C</option>
+                        <option value="C#">C#</option>
+                        <option value="D">D</option>
+                        <option value="D#">D#</option>
+                        <option value="E">E</option>
+                        <option value="F">F</option>
+                        <option value="F#">F#</option>
+                        <option value="G">G</option>
+                        <option value="G#">G#</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="songLyrics">Lyrics & Chords</label>
+                    <textarea id="songLyrics" rows="15" placeholder="Enter lyrics with chords in brackets like [C] or [Am]"></textarea>
+                </div>
+                <button type="submit" class="btn">Save Song</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        // Transposer Class
+        class Transposer {
+            constructor() {
+                this.chords = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#'];
+                this.chordRegex = /\[([A-G][#b]?(m|maj|7|9|sus|dim|aug)?(\/[A-G][#b]?)?)\]/g;
+            }
+
+            transpose(content, semitones) {
+                if (semitones === 0) return content;
+                
+                return content.replace(this.chordRegex, (match, chord) => {
+                    return `[${this.transposeChord(chord, semitones)}]`;
+                });
+            }
+
+            transposeChord(chord, semitones) {
+                // Extract the base chord (without suffixes)
+                let baseChord = chord;
+                let suffix = '';
+                
+                // Handle slash chords (e.g., "G/B")
+                let slashChord = '';
+                if (chord.includes('/')) {
+                    const parts = chord.split('/');
+                    baseChord = parts[0];
+                    slashChord = parts[1];
+                }
+                
+                // Extract the suffix (m, 7, sus, etc.)
+                for (let i = 1; i <= baseChord.length; i++) {
+                    const char = baseChord.charAt(i);
+                    if (char === '#' || char === 'b') {
+                        continue;
+                    }
+                    if (char.match(/[A-G]/i)) {
+                        break;
+                    }
+                    suffix = baseChord.substring(i);
+                    baseChord = baseChord.substring(0, i);
+                    break;
+                }
+                
+                // Find the index of the base chord
+                let index = this.chords.indexOf(baseChord);
+                if (index === -1) {
+                    // Handle flat notation (convert to sharp)
+                    const flatToSharp = {
+                        'Ab': 'G#',
+                        'Bb': 'A#',
+                        'Cb': 'B',
+                        'Db': 'C#',
+                        'Eb': 'D#',
+                        'Fb': 'E',
+                        'Gb': 'F#'
+                    };
+                    
+                    if (flatToSharp[baseChord]) {
+                        baseChord = flatToSharp[baseChord];
+                        index = this.chords.indexOf(baseChord);
+                    }
+                    
+                    if (index === -1) return chord; // Return original if not found
+                }
+                
+                // Calculate new index
+                let newIndex = (index + semitones + this.chords.length) % this.chords.length;
+                
+                // Transpose the base chord
+                let newBaseChord = this.chords[newIndex];
+                
+                // Transpose the slash chord if present
+                let newSlashChord = '';
+                if (slashChord) {
+                    let slashIndex = this.chords.indexOf(slashChord);
+                    if (slashIndex === -1) {
+                        if (flatToSharp[slashChord]) {
+                            slashChord = flatToSharp[slashChord];
+                            slashIndex = this.chords.indexOf(slashChord);
+                        }
+                    }
+                    
+                    if (slashIndex !== -1) {
+                        let newSlashIndex = (slashIndex + semitones + this.chords.length) % this.chords.length;
+                        newSlashChord = '/' + this.chords[newSlashIndex];
+                    } else {
+                        newSlashChord = '/' + slashChord;
+                    }
+                }
+                
+                // Return the transposed chord
+                return newBaseChord + suffix + newSlashChord;
+            }
+        }
+
+        // Main Application
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize transposer
+            const transposer = new Transposer();
+            
+            // DOM elements
+            const songList = document.getElementById('songList');
+            const songContent = document.getElementById('songContent');
+            const searchInput = document.getElementById('searchInput');
+            const categoryLinks = document.querySelectorAll('.categories ul li a');
+            const themeToggle = document.getElementById('themeToggle');
+            const addSongBtn = document.getElementById('addSongBtn');
+            const adminLoginBtn = document.getElementById('adminLoginBtn');
+            const adminLoginModal = document.getElementById('adminLoginModal');
+            const songModal = document.getElementById('songModal');
+            const closeModal = document.querySelectorAll('.close');
+            const adminLoginForm = document.getElementById('adminLoginForm');
+            const songForm = document.getElementById('songForm');
+            const transposeUp = document.getElementById('transposeUp');
+            const transposeDown = document.getElementById('transposeDown');
+            const resetKey = document.getElementById('resetKey');
+            const currentKeyDisplay = document.getElementById('currentKey');
+            const downloadPDF = document.getElementById('downloadPDF');
+            const setupMessage = document.getElementById('setupMessage');
+            
+            // State
+            let songs = [];
+            let currentSong = null;
+            let originalKey = 'C';
+            let currentKey = 'C';
+            let transposeValue = 0;
+            let isAdminLoggedIn = false;
+            
+            // Default songs
+            const defaultSongs = [
+                {
+                    "id": "1",
+                    "title": "Amazing Grace",
+                    "artist": "John Newton",
+                    "category": "worship",
+                    "key": "C",
+                    "lyrics": "[C]Amazing grace, how [G]sweet the sound\n[A7]That saved a wretch like [F]me\n[C]I once was lost, but [G]now am found\n[C]Was blind, but [F]now I [C]see\n\n[C]'Twas grace that [G]taught my heart to [A7]fear\nAnd grace my [F]fears re[C]lieved\n[C]How precious did [G]that grace ap[A7]pear\nThe hour I [F]first be[C]lieved\n\n[C]Through many dangers, [G]toils and snares\n[A7]I have already [F]come\n[C]'Tis grace has [G]brought me safe [C]thus far\nAnd [F]grace will [C]lead me [G]home"
+                },
+                {
+                    "id": "2",
+                    "title": "Wonderwall",
+                    "artist": "Oasis",
+                    "category": "rock",
+                    "key": "Em",
+                    "lyrics": "[Em]Today is gonna be the day that they're gonna throw it back to you\n[G]By now you should've somehow realized what you gotta do\n[D]I don't believe that anybody feels the way I do[A7] about you now\n\n[Em]Backbeat, the word is on the street that the fire in your heart is out\n[G]I'm sure you've heard it all before but you never really had a doubt\n[D]I don't believe that anybody feels the way I do[A7] about you now\n\n[C]And all the roads we have to walk are [G]winding\n[C]And all the lights that lead us there are [G]blinding\n[D]There are many things that I would[A7] like to say to you\nBut I don't know [G]how\n\n[C]Because maybe [Em7]you're gonna be the one that saves me [G]\nAnd after all [Em7]you're my wonderwall [G]\n\n[C]Today was gonna be the day but they'll never throw it back to you\n[G]By now you should've somehow realized what you're not to do\n[D]I don't believe that anybody feels the way I do[A7] about you now"
+                },
+                {
+                    "id": "3",
+                    "title": "Country Roads",
+                    "artist": "John Denver",
+                    "category": "country",
+                    "key": "G",
+                    "lyrics": "[G]Almost heaven, West [D]Virginia\n[Em]Blue Ridge Mountains, [C]Shenandoah [G]River\n[G]Life is old there, [D]older than the trees\n[Em]Younger than the mountains, [C]growin' like a [G]breeze\n\n[G]Country roads, take me [D]home\nTo the [Em]place I be[C]long\n[G]West Virginia, mountain [D]mama\nTake me [C]home, country [G]roads\n\n[G]All my memories, [D]gather 'round her\n[Em]Miner's lady, [C]stranger to blue [G]water\n[G]Dark and dusty, [D]painted on the sky\n[Em]Misty taste of moonshine, [C]teardrop in my [G]eye"
+                }
+            ];
+            
+            // Check if admin exists
+            function checkAdminExists() {
+                const admin = localStorage.getItem('admin');
+                return admin !== null;
+            }
+            
+            // Initialize admin if not exists
+            if (!checkAdminExists()) {
+                setupMessage.style.display = 'block';
+            }
+            
+            // Admin login
+            function adminLogin(username, password) {
+                const admin = localStorage.getItem('admin');
+                
+                if (!admin) {
+                    // Create new admin
+                    localStorage.setItem('admin', JSON.stringify({ username, password }));
+                    isAdminLoggedIn = true;
+                    localStorage.setItem('isAdminLoggedIn', 'true');
+                    updateAdminUI();
+                    adminLoginModal.style.display = 'none';
+                    setupMessage.style.display = 'none';
+                    return true;
+                }
+                
+                const adminData = JSON.parse(admin);
+                if (adminData.username === username && adminData.password === password) {
+                    isAdminLoggedIn = true;
+                    localStorage.setItem('isAdminLoggedIn', 'true');
+                    updateAdminUI();
+                    adminLoginModal.style.display = 'none';
+                    return true;
+                }
+                
+                return false;
+            }
+            
+            // Admin logout
+            function adminLogout() {
+                isAdminLoggedIn = false;
+                localStorage.setItem('isAdminLoggedIn', 'false');
+                updateAdminUI();
+            }
+            
+            // Update admin UI
+            function updateAdminUI() {
+                if (isAdminLoggedIn) {
+                    addSongBtn.style.display = 'flex';
+                    adminLoginBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Logout';
+                    adminLoginBtn.onclick = adminLogout;
+                    
+                    // Add admin badge to logo
+                    const logo = document.querySelector('.logo h1');
+                    if (!logo.querySelector('.admin-badge')) {
+                        const badge = document.createElement('span');
+                        badge.className = 'admin-badge';
+                        badge.textContent = 'ADMIN';
+                        logo.appendChild(badge);
+                    }
+                } else {
+                    addSongBtn.style.display = 'none';
+                    adminLoginBtn.innerHTML = '<i class="fas fa-user-shield"></i> Admin Login';
+                    adminLoginBtn.onclick = () => {
+                        adminLoginModal.style.display = 'block';
+                    };
+                    
+                    // Remove admin badge
+                    const badge = document.querySelector('.admin-badge');
+                    if (badge) {
+                        badge.remove();
+                    }
+                }
+            }
+            
+            // Check admin login status on load
+            if (localStorage.getItem('isAdminLoggedIn') === 'true') {
+                isAdminLoggedIn = true;
+                updateAdminUI();
+            }
+            
+            // Load songs from local storage or default
+            function loadSongs() {
+                const savedSongs = localStorage.getItem('songs');
+                if (savedSongs) {
+                    songs = JSON.parse(savedSongs);
+                } else {
+                    songs = defaultSongs;
+                    saveSongs();
+                }
+                renderSongList();
+            }
+            
+            // Save songs to local storage
+            function saveSongs() {
+                localStorage.setItem('songs', JSON.stringify(songs));
+            }
+            
+            // Render song list
+            function renderSongList(filteredSongs = songs) {
+                songList.innerHTML = '';
+                
+                if (filteredSongs.length === 0) {
+                    songList.innerHTML = '<li class="no-songs">No songs found</li>';
+                    return;
+                }
+                
+                filteredSongs.forEach(song => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<a href="#" data-id="${song.id}">${song.title}</a>`;
+                    songList.appendChild(li);
+                });
+                
+                // Add click event to song links
+                document.querySelectorAll('#songList a').forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const songId = this.getAttribute('data-id');
+                        loadSong(songId);
+                    });
+                });
+            }
+            
+            // Process lyrics to display chords above lyrics
+            function processLyrics(lyrics) {
+                const lines = lyrics.split('\n');
+                let processedHTML = '';
+                
+                lines.forEach(line => {
+                    if (line.trim() === '') {
+                        processedHTML += '<div class="lyric-line empty-line"></div>';
+                        return;
+                    }
+                    
+                    // Extract chords and lyrics
+                    const chordRegex = /\[([^\]]+)\]/g;
+                    let chordLine = '';
+                    let lyricLine = line;
+                    let chordPositions = [];
+                    let match;
+                    
+                    // Find all chord positions
+                    while ((match = chordRegex.exec(line)) !== null) {
+                        chordPositions.push({
+                            chord: match[1],
+                            position: match.index,
+                            length: match[0].length
+                        });
+                    }
+                    
+                    // Remove chords from lyric line
+                    lyricLine = line.replace(chordRegex, '');
+                    
+                    // Build chord line
+                    let lastPosition = 0;
+                    chordPositions.forEach(pos => {
+                        // Add spaces to align with lyrics
+                        chordLine += ' '.repeat(pos.position - lastPosition);
+                        chordLine += pos.chord;
+                        lastPosition = pos.position + pos.length - pos.chord.length;
+                    });
+                    
+                    processedHTML += `<div class="chord-line">${chordLine}</div>`;
+                    processedHTML += `<div class="lyric-line">${lyricLine}</div>`;
+                });
+                
+                return processedHTML;
+            }
+            
+            // Load a song
+            function loadSong(songId) {
+                const song = songs.find(s => s.id === songId);
+                if (!song) return;
+                
+                currentSong = song;
+                originalKey = song.key;
+                currentKey = song.key;
+                transposeValue = 0;
+                currentKeyDisplay.textContent = currentKey;
+                
+                // Render song content with chords above lyrics
+                renderSongContent(song.lyrics);
+                
+                // Highlight active song in the list
+                document.querySelectorAll('#songList a').forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('data-id') === songId) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+            
+            // Render song content with chords above lyrics
+            function renderSongContent(lyrics) {
+                if (!currentSong) return;
+                
+                // Process lyrics to display chords above lyrics
+                const processedLyrics = processLyrics(lyrics);
+                
+                songContent.innerHTML = `
+                    <div class="lyrics-container">
+                        <h2>${currentSong.title}</h2>
+                        <div class="artist">${currentSong.artist}</div>
+                        <div class="lyrics-content">${processedLyrics}</div>
+                    </div>
+                `;
+            }
+            
+            // Search functionality
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const filteredSongs = songs.filter(song => 
+                    song.title.toLowerCase().includes(searchTerm) || 
+                    song.artist.toLowerCase().includes(searchTerm)
+                );
+                renderSongList(filteredSongs);
+            });
+            
+            // Category filter
+            categoryLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Update active category
+                    categoryLinks.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Filter songs by category
+                    const category = this.getAttribute('data-category');
+                    if (category === 'all') {
+                        renderSongList();
+                    } else {
+                        const filteredSongs = songs.filter(song => song.category === category);
+                        renderSongList(filteredSongs);
+                    }
+                });
+            });
+            
+            // Theme toggle
+            themeToggle.addEventListener('click', function() {
+                const body = document.body;
+                const currentTheme = body.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                body.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                // Update icon
+                const icon = this.querySelector('i');
+                icon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+            });
+            
+            // Load saved theme
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.body.setAttribute('data-theme', savedTheme);
+            if (savedTheme === 'dark') {
+                themeToggle.querySelector('i').className = 'fas fa-sun';
+            }
+            
+            // Admin login form
+            adminLoginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const username = document.getElementById('adminUsername').value;
+                const password = document.getElementById('adminPassword').value;
+                
+                if (adminLogin(username, password)) {
+                    this.reset();
+                } else {
+                    alert('Invalid username or password');
+                }
+            });
+            
+            // Add song modal
+            addSongBtn.addEventListener('click', function() {
+                document.getElementById('modalTitle').textContent = 'Add New Song';
+                songForm.reset();
+                songModal.style.display = 'block';
+            });
+            
+            // Close modals
+            closeModal.forEach(closeBtn => {
+                closeBtn.addEventListener('click', function() {
+                    adminLoginModal.style.display = 'none';
+                    songModal.style.display = 'none';
+                });
+            });
+            
+            window.addEventListener('click', function(e) {
+                if (e.target === adminLoginModal) {
+                    adminLoginModal.style.display = 'none';
+                }
+                if (e.target === songModal) {
+                    songModal.style.display = 'none';
+                }
+            });
+            
+            // Save song
+            songForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const title = document.getElementById('songTitle').value;
+                const artist = document.getElementById('songArtist').value;
+                const category = document.getElementById('songCategory').value;
+                const key = document.getElementById('songKey').value;
+                const lyrics = document.getElementById('songLyrics').value;
+                
+                const newSong = {
+                    id: Date.now().toString(),
+                    title,
+                    artist,
+                    category,
+                    key,
+                    lyrics
+                };
+                
+                songs.push(newSong);
+                saveSongs();
+                renderSongList();
+                songModal.style.display = 'none';
+                
+                // Load the newly added song
+                loadSong(newSong.id);
+            });
+            
+            // Transpose functionality
+            transposeUp.addEventListener('click', function() {
+                if (!currentSong) return;
+                
+                transposeValue++;
+                currentKey = transposer.transposeChord(originalKey, transposeValue);
+                currentKeyDisplay.textContent = currentKey;
+                
+                const transposedLyrics = transposer.transpose(currentSong.lyrics, transposeValue);
+                renderSongContent(transposedLyrics);
+            });
+            
+            transposeDown.addEventListener('click', function() {
+                if (!currentSong) return;
+                
+                transposeValue--;
+                currentKey = transposer.transposeChord(originalKey, transposeValue);
+                currentKeyDisplay.textContent = currentKey;
+                
+                const transposedLyrics = transposer.transpose(currentSong.lyrics, transposeValue);
+                renderSongContent(transposedLyrics);
+            });
+            
+            resetKey.addEventListener('click', function() {
+                if (!currentSong) return;
+                
+                transposeValue = 0;
+                currentKey = originalKey;
+                currentKeyDisplay.textContent = currentKey;
+                
+                renderSongContent(currentSong.lyrics);
+            });
+            
+            // Download PDF with chords above lyrics
+            downloadPDF.addEventListener('click', function() {
+                if (!currentSong) return;
+                
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                // Add title
+                doc.setFontSize(20);
+                doc.text(currentSong.title, 105, 20, { align: 'center' });
+                
+                // Add artist
+                doc.setFontSize(14);
+                doc.text(currentSong.artist, 105, 30, { align: 'center' });
+                
+                // Add key
+                doc.setFontSize(12);
+                doc.text(`Key: ${currentKey}`, 105, 40, { align: 'center' });
+                
+                // Process lyrics for PDF
+                let lyricsText = currentSong.lyrics;
+                if (transposeValue !== 0) {
+                    lyricsText = transposer.transpose(currentSong.lyrics, transposeValue);
+                }
+                
+                // Split lyrics into lines
+                const lines = lyricsText.split('\n');
+                let yPosition = 50;
+                
+                lines.forEach(line => {
+                    if (yPosition > 270) {
+                        doc.addPage();
+                        yPosition = 20;
+                    }
+                    
+                    if (line.trim() === '') {
+                        yPosition += 5;
+                    } else {
+                        // Extract chords and lyrics for PDF
+                        const chordRegex = /\[([^\]]+)\]/g;
+                        let chordLine = '';
+                        let lyricLine = line.replace(chordRegex, '');
+                        let chordPositions = [];
+                        let match;
+                        
+                        // Find all chord positions
+                        while ((match = chordRegex.exec(line)) !== null) {
+                            chordPositions.push({
+                                chord: match[1],
+                                position: match.index,
+                                length: match[0].length
+                            });
+                        }
+                        
+                        // Build chord line for PDF
+                        let lastPosition = 0;
+                        chordPositions.forEach(pos => {
+                            chordLine += ' '.repeat(pos.position - lastPosition);
+                            chordLine += pos.chord;
+                            lastPosition = pos.position + pos.length - pos.chord.length;
+                        });
+                        
+                        // Add chord line to PDF
+                        doc.setFontSize(10);
+                        doc.text(chordLine, 15, yPosition);
+                        yPosition += 5;
+                        
+                        // Add lyric line to PDF
+                        doc.setFontSize(12);
+                        doc.text(lyricLine, 15, yPosition);
+                        yPosition += 10;
+                    }
+                });
+                
+                // Save the PDF
+                doc.save(`${currentSong.title} - ${currentSong.artist}.pdf`);
+            });
+            
+            // Initialize the app
+            loadSongs();
+        });
+    </script>
+</body>
+</html>
