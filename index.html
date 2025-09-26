@@ -43,6 +43,7 @@
             color: var(--text-color);
             line-height: 1.6;
             transition: var(--transition);
+            overflow-x: hidden;
         }
 
         .container {
@@ -59,6 +60,8 @@
             justify-content: space-between;
             align-items: center;
             box-shadow: var(--shadow);
+            position: relative;
+            z-index: 100;
         }
 
         .logo h1 {
@@ -77,18 +80,37 @@
             background-color: var(--primary-color);
             color: white;
             border: none;
-            padding: 0.5rem 1rem;
+            padding: 0.75rem 1.25rem;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 0.9rem;
+            font-size: 1rem;
             display: flex;
             align-items: center;
             gap: 0.5rem;
             transition: var(--transition);
+            min-height: 44px; /* Larger touch target */
         }
 
         .btn:hover {
             background-color: var(--secondary-color);
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+
+        .hamburger {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
         }
 
         .sidebar {
@@ -102,6 +124,11 @@
             left: 0;
             top: 70px;
             transition: var(--transition);
+            z-index: 50;
+        }
+
+        .sidebar-hidden {
+            transform: translateX(-100%);
         }
 
         .search-container {
@@ -115,6 +142,7 @@
             border-radius: 4px;
             background-color: var(--bg-color);
             color: var(--text-color);
+            font-size: 1rem;
         }
 
         .categories, .song-list {
@@ -139,14 +167,40 @@
             color: var(--text-color);
             text-decoration: none;
             display: block;
-            padding: 0.5rem;
+            padding: 0.75rem;
             border-radius: 4px;
             transition: var(--transition);
+            font-size: 1rem;
         }
 
         .categories ul li a:hover, .song-list ul li a:hover, .categories ul li a.active, .song-list ul li a.active {
             background-color: var(--primary-color);
             color: white;
+        }
+
+        .song-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .song-item a {
+            flex: 1;
+        }
+
+        .delete-btn {
+            background: none;
+            border: none;
+            color: #dc3545;
+            cursor: pointer;
+            padding: 0.75rem;
+            border-radius: 4px;
+            transition: var(--transition);
+            font-size: 1rem;
+        }
+
+        .delete-btn:hover {
+            background-color: rgba(220, 53, 69, 0.1);
         }
 
         main {
@@ -155,6 +209,11 @@
             padding: 2rem;
             display: flex;
             flex-direction: column;
+            transition: var(--transition);
+        }
+
+        .main-shifted {
+            margin-left: 0;
         }
 
         .song-container {
@@ -165,6 +224,7 @@
             box-shadow: var(--shadow);
             margin-bottom: 1rem;
             overflow-y: auto;
+            touch-action: pan-y; /* Enable vertical scrolling */
         }
 
         .welcome-message {
@@ -222,11 +282,13 @@
             padding: 1rem;
             border-radius: 8px;
             box-shadow: var(--shadow);
+            flex-wrap: wrap;
         }
 
         .key-display {
             font-weight: bold;
             font-size: 1.1rem;
+            padding: 0.5rem;
         }
 
         .modal {
@@ -258,6 +320,7 @@
             font-size: 28px;
             font-weight: bold;
             cursor: pointer;
+            padding: 0.5rem;
         }
 
         .close:hover {
@@ -272,6 +335,7 @@
             display: block;
             margin-bottom: 0.5rem;
             font-weight: bold;
+            font-size: 1rem;
         }
 
         .form-group input,
@@ -283,6 +347,7 @@
             border-radius: 4px;
             background-color: var(--light-color);
             color: var(--text-color);
+            font-size: 1rem;
         }
 
         .form-group textarea {
@@ -310,6 +375,7 @@
             z-index: 2000;
             opacity: 0;
             transition: opacity 0.3s ease;
+            font-size: 1rem;
         }
 
         .notification.success {
@@ -324,6 +390,14 @@
             opacity: 1;
         }
 
+        .swipe-hint {
+            text-align: center;
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            display: none;
+        }
+
         /* Responsive Design */
         @media (max-width: 992px) {
             .sidebar {
@@ -336,24 +410,28 @@
         }
 
         @media (max-width: 768px) {
-            .container {
-                flex-direction: column;
+            .hamburger {
+                display: block;
             }
             
             .sidebar {
-                width: 100%;
-                height: auto;
-                position: relative;
-                top: 0;
-                left: 0;
+                transform: translateX(-100%);
+            }
+            
+            .sidebar-open {
+                transform: translateX(0);
             }
             
             main {
                 margin-left: 0;
             }
             
-            .transpose-controls {
+            .controls {
                 flex-wrap: wrap;
+            }
+            
+            .swipe-hint {
+                display: block;
             }
         }
 
@@ -361,6 +439,7 @@
             header {
                 flex-direction: column;
                 gap: 1rem;
+                padding: 1rem;
             }
             
             .controls {
@@ -373,14 +452,32 @@
                 margin: 10% auto;
                 padding: 1.5rem;
             }
+            
+            .btn {
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .transpose-controls {
+                padding: 0.75rem;
+            }
+            
+            .key-display {
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <div class="logo">
-                <h1><i class="fas fa-music"></i> Lyrics Collection</h1>
+            <div style="display: flex; align-items: center;">
+                <button class="hamburger" id="hamburger">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="logo">
+                    <h1><i class="fas fa-music"></i> Lyrics Collection</h1>
+                </div>
             </div>
             <div class="controls">
                 <button id="addSongBtn" class="btn" style="display: none;"><i class="fas fa-plus"></i> Add Song</button>
@@ -389,7 +486,7 @@
             </div>
         </header>
 
-        <div class="sidebar">
+        <div class="sidebar" id="sidebar">
             <div class="search-container">
                 <input type="text" id="searchInput" placeholder="Search songs...">
             </div>
@@ -411,13 +508,16 @@
             </div>
         </div>
 
-        <main>
-            <div class="song-container">
+        <main id="main">
+            <div class="song-container" id="songContainer">
                 <div id="songContent">
                     <div class="welcome-message">
                         <h2>Welcome to Lyrics Collection</h2>
                         <p>Select a song from the list to view lyrics and chords</p>
                     </div>
+                </div>
+                <div class="swipe-hint">
+                    <i class="fas fa-hand-point-left"></i> Swipe left/right to navigate songs <i class="fas fa-hand-point-right"></i>
                 </div>
             </div>
 
@@ -498,6 +598,19 @@
                 </div>
                 <button type="submit" class="btn">Save Song</button>
             </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Confirm Delete</h2>
+            <p>Are you sure you want to delete this song? This action cannot be undone.</p>
+            <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem;">
+                <button id="cancelDelete" class="btn">Cancel</button>
+                <button id="confirmDelete" class="btn btn-danger">Delete</button>
+            </div>
         </div>
     </div>
 
@@ -606,8 +719,12 @@
             const transposer = new Transposer();
             
             // DOM elements
+            const hamburger = document.getElementById('hamburger');
+            const sidebar = document.getElementById('sidebar');
+            const main = document.getElementById('main');
             const songList = document.getElementById('songList');
             const songContent = document.getElementById('songContent');
+            const songContainer = document.getElementById('songContainer');
             const searchInput = document.getElementById('searchInput');
             const categoryLinks = document.querySelectorAll('.categories ul li a');
             const themeToggle = document.getElementById('themeToggle');
@@ -615,9 +732,12 @@
             const adminLoginBtn = document.getElementById('adminLoginBtn');
             const adminLoginModal = document.getElementById('adminLoginModal');
             const songModal = document.getElementById('songModal');
+            const deleteModal = document.getElementById('deleteModal');
             const closeModal = document.querySelectorAll('.close');
             const adminLoginForm = document.getElementById('adminLoginForm');
             const songForm = document.getElementById('songForm');
+            const cancelDelete = document.getElementById('cancelDelete');
+            const confirmDelete = document.getElementById('confirmDelete');
             const transposeUp = document.getElementById('transposeUp');
             const transposeDown = document.getElementById('transposeDown');
             const resetKey = document.getElementById('resetKey');
@@ -632,6 +752,12 @@
             let currentKey = 'C';
             let transposeValue = 0;
             let isAdminLoggedIn = false;
+            let songToDelete = null;
+            let currentSongIndex = -1;
+            
+            // Touch state for swipe gestures
+            let touchStartX = 0;
+            let touchEndX = 0;
             
             // Default songs
             const defaultSongs = [
@@ -673,6 +799,22 @@
                 setTimeout(() => {
                     notification.classList.remove('show');
                 }, 3000);
+            }
+            
+            // Toggle sidebar
+            function toggleSidebar() {
+                sidebar.classList.toggle('sidebar-open');
+                main.classList.toggle('main-shifted');
+            }
+            
+            // Close sidebar when clicking outside on mobile
+            function closeSidebarOnOutsideClick(e) {
+                if (window.innerWidth <= 768 && 
+                    !sidebar.contains(e.target) && 
+                    !hamburger.contains(e.target) &&
+                    sidebar.classList.contains('sidebar-open')) {
+                    toggleSidebar();
+                }
             }
             
             // Admin login
@@ -727,6 +869,9 @@
                         badge.remove();
                     }
                 }
+                
+                // Update song list to show/hide delete buttons
+                renderSongList();
             }
             
             // Check admin login status on load
@@ -761,9 +906,24 @@
                     return;
                 }
                 
-                filteredSongs.forEach(song => {
+                filteredSongs.forEach((song, index) => {
                     const li = document.createElement('li');
-                    li.innerHTML = `<a href="#" data-id="${song.id}">${song.title}</a>`;
+                    
+                    if (isAdminLoggedIn) {
+                        // Show delete button for admin
+                        li.innerHTML = `
+                            <div class="song-item">
+                                <a href="#" data-id="${song.id}" data-index="${index}">${song.title}</a>
+                                <button class="delete-btn" data-id="${song.id}" title="Delete song">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        `;
+                    } else {
+                        // Regular users see just the song title
+                        li.innerHTML = `<a href="#" data-id="${song.id}" data-index="${index}">${song.title}</a>`;
+                    }
+                    
                     songList.appendChild(li);
                 });
                 
@@ -772,9 +932,58 @@
                     link.addEventListener('click', function(e) {
                         e.preventDefault();
                         const songId = this.getAttribute('data-id');
-                        loadSong(songId);
+                        const songIndex = parseInt(this.getAttribute('data-index'));
+                        loadSong(songId, songIndex);
+                        
+                        // Close sidebar on mobile after selection
+                        if (window.innerWidth <= 768) {
+                            toggleSidebar();
+                        }
                     });
                 });
+                
+                // Add click event to delete buttons (only for admin)
+                if (isAdminLoggedIn) {
+                    document.querySelectorAll('.delete-btn').forEach(btn => {
+                        btn.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            const songId = this.getAttribute('data-id');
+                            showDeleteConfirmation(songId);
+                        });
+                    });
+                }
+            }
+            
+            // Show delete confirmation modal
+            function showDeleteConfirmation(songId) {
+                songToDelete = songId;
+                deleteModal.style.display = 'block';
+            }
+            
+            // Delete song
+            function deleteSong(songId) {
+                const songIndex = songs.findIndex(song => song.id === songId);
+                if (songIndex !== -1) {
+                    const songTitle = songs[songIndex].title;
+                    songs.splice(songIndex, 1);
+                    saveSongs();
+                    renderSongList();
+                    
+                    // Clear song content if deleted song is currently being viewed
+                    if (currentSong && currentSong.id === songId) {
+                        currentSong = null;
+                        currentSongIndex = -1;
+                        songContent.innerHTML = `
+                            <div class="welcome-message">
+                                <h2>Welcome to Lyrics Collection</h2>
+                                <p>Select a song from the list to view lyrics and chords</p>
+                            </div>
+                        `;
+                    }
+                    
+                    showNotification(`"${songTitle}" has been deleted`);
+                }
             }
             
             // Process lyrics to display chords above lyrics
@@ -824,11 +1033,12 @@
             }
             
             // Load a song
-            function loadSong(songId) {
+            function loadSong(songId, songIndex) {
                 const song = songs.find(s => s.id === songId);
                 if (!song) return;
                 
                 currentSong = song;
+                currentSongIndex = songIndex;
                 originalKey = song.key;
                 currentKey = song.key;
                 transposeValue = 0;
@@ -844,6 +1054,24 @@
                         link.classList.add('active');
                     }
                 });
+            }
+            
+            // Navigate to next song
+            function nextSong() {
+                if (songs.length === 0 || currentSongIndex === -1) return;
+                
+                const nextIndex = (currentSongIndex + 1) % songs.length;
+                const nextSong = songs[nextIndex];
+                loadSong(nextSong.id, nextIndex);
+            }
+            
+            // Navigate to previous song
+            function prevSong() {
+                if (songs.length === 0 || currentSongIndex === -1) return;
+                
+                const prevIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+                const prevSong = songs[prevIndex];
+                loadSong(prevSong.id, prevIndex);
             }
             
             // Render song content with chords above lyrics
@@ -913,6 +1141,12 @@
                 themeToggle.querySelector('i').className = 'fas fa-sun';
             }
             
+            // Hamburger menu toggle
+            hamburger.addEventListener('click', toggleSidebar);
+            
+            // Close sidebar when clicking outside
+            document.addEventListener('click', closeSidebarOnOutsideClick);
+            
             // Admin login button click
             adminLoginBtn.addEventListener('click', function() {
                 if (!isAdminLoggedIn) {
@@ -943,6 +1177,7 @@
                 closeBtn.addEventListener('click', function() {
                     adminLoginModal.style.display = 'none';
                     songModal.style.display = 'none';
+                    deleteModal.style.display = 'none';
                 });
             });
             
@@ -952,6 +1187,23 @@
                 }
                 if (e.target === songModal) {
                     songModal.style.display = 'none';
+                }
+                if (e.target === deleteModal) {
+                    deleteModal.style.display = 'none';
+                }
+            });
+            
+            // Delete confirmation buttons
+            cancelDelete.addEventListener('click', function() {
+                deleteModal.style.display = 'none';
+                songToDelete = null;
+            });
+            
+            confirmDelete.addEventListener('click', function() {
+                if (songToDelete) {
+                    deleteSong(songToDelete);
+                    deleteModal.style.display = 'none';
+                    songToDelete = null;
                 }
             });
             
@@ -980,7 +1232,7 @@
                 songModal.style.display = 'none';
                 
                 // Load the newly added song
-                loadSong(newSong.id);
+                loadSong(newSong.id, songs.length - 1);
                 showNotification('Song added successfully!');
             });
             
@@ -1095,6 +1347,32 @@
                 doc.save(`${currentSong.title} - ${currentSong.artist}.pdf`);
                 showNotification('PDF downloaded successfully!');
             });
+            
+            // Touch event handlers for swipe gestures
+            songContainer.addEventListener('touchstart', function(e) {
+                touchStartX = e.changedTouches[0].screenX;
+            }, false);
+            
+            songContainer.addEventListener('touchend', function(e) {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+            }, false);
+            
+            // Handle swipe gesture
+            function handleSwipe() {
+                const swipeThreshold = 50; // Minimum distance for swipe
+                const diff = touchStartX - touchEndX;
+                
+                if (Math.abs(diff) > swipeThreshold) {
+                    if (diff > 0) {
+                        // Swipe left - next song
+                        nextSong();
+                    } else {
+                        // Swipe right - previous song
+                        prevSong();
+                    }
+                }
+            }
             
             // Initialize the app
             loadSongs();
