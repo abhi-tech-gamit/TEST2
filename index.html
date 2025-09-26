@@ -299,14 +299,29 @@
             margin-left: 0.5rem;
         }
 
-        .setup-message {
-            background-color: #fff3cd;
-            border: 1px solid #ffeeba;
-            color: #856404;
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
             padding: 1rem;
             border-radius: 4px;
-            margin-bottom: 1rem;
-            text-align: center;
+            color: white;
+            font-weight: bold;
+            z-index: 2000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .notification.success {
+            background-color: #28a745;
+        }
+
+        .notification.error {
+            background-color: #dc3545;
+        }
+
+        .notification.show {
+            opacity: 1;
         }
 
         /* Responsive Design */
@@ -423,9 +438,6 @@
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2>Admin Login</h2>
-            <div id="setupMessage" class="setup-message" style="display: none;">
-                No admin account found. Please create one below.
-            </div>
             <form id="adminLoginForm">
                 <div class="form-group">
                     <label for="adminUsername">Username</label>
@@ -488,6 +500,9 @@
             </form>
         </div>
     </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>
@@ -608,7 +623,7 @@
             const resetKey = document.getElementById('resetKey');
             const currentKeyDisplay = document.getElementById('currentKey');
             const downloadPDF = document.getElementById('downloadPDF');
-            const setupMessage = document.getElementById('setupMessage');
+            const notification = document.getElementById('notification');
             
             // State
             let songs = [];
@@ -646,41 +661,33 @@
                 }
             ];
             
-            // Check if admin exists
-            function checkAdminExists() {
-                const admin = localStorage.getItem('admin');
-                return admin !== null;
-            }
+            // Hardcoded admin credentials
+            const ADMIN_USERNAME = "Abhi";
+            const ADMIN_PASSWORD = "Gamitn@1975";
             
-            // Initialize admin if not exists
-            if (!checkAdminExists()) {
-                setupMessage.style.display = 'block';
+            // Show notification
+            function showNotification(message, type = 'success') {
+                notification.textContent = message;
+                notification.className = `notification ${type} show`;
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
             }
             
             // Admin login
             function adminLogin(username, password) {
-                const admin = localStorage.getItem('admin');
-                
-                if (!admin) {
-                    // Create new admin
-                    localStorage.setItem('admin', JSON.stringify({ username, password }));
+                // Check against hardcoded credentials
+                if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
                     isAdminLoggedIn = true;
                     localStorage.setItem('isAdminLoggedIn', 'true');
                     updateAdminUI();
                     adminLoginModal.style.display = 'none';
-                    setupMessage.style.display = 'none';
+                    showNotification('Login successful!');
                     return true;
                 }
                 
-                const adminData = JSON.parse(admin);
-                if (adminData.username === username && adminData.password === password) {
-                    isAdminLoggedIn = true;
-                    localStorage.setItem('isAdminLoggedIn', 'true');
-                    updateAdminUI();
-                    adminLoginModal.style.display = 'none';
-                    return true;
-                }
-                
+                showNotification('Invalid username or password', 'error');
                 return false;
             }
             
@@ -689,6 +696,7 @@
                 isAdminLoggedIn = false;
                 localStorage.setItem('isAdminLoggedIn', 'false');
                 updateAdminUI();
+                showNotification('Logged out successfully');
             }
             
             // Update admin UI
@@ -905,6 +913,13 @@
                 themeToggle.querySelector('i').className = 'fas fa-sun';
             }
             
+            // Admin login button click
+            adminLoginBtn.addEventListener('click', function() {
+                if (!isAdminLoggedIn) {
+                    adminLoginModal.style.display = 'block';
+                }
+            });
+            
             // Admin login form
             adminLoginForm.addEventListener('submit', function(e) {
                 e.preventDefault();
@@ -912,11 +927,8 @@
                 const username = document.getElementById('adminUsername').value;
                 const password = document.getElementById('adminPassword').value;
                 
-                if (adminLogin(username, password)) {
-                    this.reset();
-                } else {
-                    alert('Invalid username or password');
-                }
+                adminLogin(username, password);
+                this.reset();
             });
             
             // Add song modal
@@ -969,6 +981,7 @@
                 
                 // Load the newly added song
                 loadSong(newSong.id);
+                showNotification('Song added successfully!');
             });
             
             // Transpose functionality
@@ -1080,6 +1093,7 @@
                 
                 // Save the PDF
                 doc.save(`${currentSong.title} - ${currentSong.artist}.pdf`);
+                showNotification('PDF downloaded successfully!');
             });
             
             // Initialize the app
