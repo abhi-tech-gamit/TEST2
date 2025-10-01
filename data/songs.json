@@ -1,0 +1,26 @@
+[
+  {
+    "id": "1",
+    "title": "Amazing Grace",
+    "artist": "John Newton",
+    "category": "worship",
+    "key": "C",
+    "lyrics": "[C]Amazing grace, how [G]sweet the sound\n[A7]That saved a wretch like [F]me\n[C]I once was lost, but [G]now am found\n[C]Was blind, but [F]now I [C]see\n\n[C]'Twas grace that [G]taught my heart to [A7]fear\nAnd grace my [F]fears re[C]lieved\n[C]How precious did [G]that grace ap[A7]pear\nThe hour I [F]first be[C]lieved\n\n[C]Through many dangers, [G]toils and snares\n[A7]I have already [F]come\n[C]'Tis grace has [G]brought me safe [C]thus far\nAnd [F]grace will [C]lead me [G]home"
+  },
+  {
+    "id": "2",
+    "title": "Wonderwall",
+    "artist": "Oasis",
+    "category": "rock",
+    "key": "Em",
+    "lyrics": "[Em]Today is gonna be the day that they're gonna throw it back to you\n[G]By now you should've somehow realized what you gotta do\n[D]I don't believe that anybody feels the way I do[A7] about you now\n\n[Em]Backbeat, the word is on the street that the fire in your heart is out\n[G]I'm sure you've heard it all before but you never really had a doubt\n[D]I don't believe that anybody feels the way I do[A7] about you now\n\n[C]And all the roads we have to walk are [G]winding\n[C]And all the lights that lead us there are [G]blinding\n[D]There are many things that I would[A7] like to say to you\nBut I don't know [G]how\n\n[C]Because maybe [Em7]you're gonna be the one that saves me [G]\nAnd after all [Em7]you're my wonderwall [G]\n\n[C]Today was gonna be the day but they'll never throw it back to you\n[G]By now you should've somehow realized what you're not to do\n[D]I don't believe that anybody feels the way I do[A7] about you now"
+  },
+  {
+    "id": "3",
+    "title": "Country Roads",
+    "artist": "John Denver",
+    "category": "country",
+    "key": "G",
+    "lyrics": "[G]Almost heaven, West [D]Virginia\n[Em]Blue Ridge Mountains, [C]Shenandoah [G]River\n[G]Life is old there, [D]older than the trees\n[Em]Younger than the mountains, [C]growin' like a [G]breeze\n\n[G]Country roads, take me [D]home\nTo the [Em]place I be[C]long\n[G]West Virginia, mountain [D]mama\nTake me [C]home, country [G]roads\n\n[G]All my memories, [D]gather 'round her\n[Em]Miner's lady, [C]stranger to blue [G]water\n[G]Dark and dusty, [D]painted on the sky\n[Em]Misty taste of moonshine, [C]teardrop in my [G]eye"
+  }
+]
