@@ -253,12 +253,14 @@ main {
     color: var(--primary-color);
     font-weight: bold;
     font-family: monospace;
-    letter-spacing: 0.1em;
     min-height: 1.5rem;
+    line-height: 1.2; /* Added for better vertical alignment */
+    white-space: pre; /* Added to preserve spaces for proper chord alignment */
 }
 
 .lyric-line {
     margin-bottom: 0.5rem;
+    line-height: 1.5; /* Added for consistent line height */
 }
 
 .empty-line {
