@@ -303,13 +303,22 @@ document.addEventListener('DOMContentLoaded', function() {
             // Remove chords from lyric line
             lyricLine = line.replace(chordRegex, '');
             
-            // Build chord line
+            // Build chord line with proper spacing
             let lastPosition = 0;
             chordPositions.forEach(pos => {
+                // Calculate the position in the lyric line
+                // by subtracting the length of all chord markers before this position
+                let adjustedPosition = pos.position;
+                for (let i = 0; i < chordPositions.length; i++) {
+                    if (chordPositions[i].position < pos.position) {
+                        adjustedPosition -= chordPositions[i].length;
+                    }
+                }
+                
                 // Add spaces to align with lyrics
-                chordLine += ' '.repeat(pos.position - lastPosition);
+                chordLine += ' '.repeat(Math.max(0, adjustedPosition - lastPosition));
                 chordLine += pos.chord;
-                lastPosition = pos.position + pos.length - pos.chord.length;
+                lastPosition = adjustedPosition + pos.chord.length;
             });
             
             processedHTML += `<div class="chord-line">${chordLine}</div>`;
@@ -613,9 +622,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Build chord line for PDF
                 let lastPosition = 0;
                 chordPositions.forEach(pos => {
-                    chordLine += ' '.repeat(pos.position - lastPosition);
+                    // Calculate the position in the lyric line
+                    let adjustedPosition = pos.position;
+                    for (let i = 0; i < chordPositions.length; i++) {
+                        if (chordPositions[i].position < pos.position) {
+                            adjustedPosition -= chordPositions[i].length;
+                        }
+                    }
+                    
+                    chordLine += ' '.repeat(Math.max(0, adjustedPosition - lastPosition));
                     chordLine += pos.chord;
-                    lastPosition = pos.position + pos.length - pos.chord.length;
+                    lastPosition = adjustedPosition + pos.chord.length;
                 });
                 
                 // Add chord line to PDF
