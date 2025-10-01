@@ -284,42 +284,49 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             
-            // Extract chords and lyrics
-            const chordRegex = /\[([^\]]+)\]/g;
+            // Initialize chord line with spaces
             let chordLine = '';
-            let lyricLine = line;
-            let chordPositions = [];
-            let match;
+            let lyricLine = '';
+            let currentChord = '';
+            let inChord = false;
+            let chordPosition = 0;
             
-            // Find all chord positions
-            while ((match = chordRegex.exec(line)) !== null) {
-                chordPositions.push({
-                    chord: match[1],
-                    position: match.index,
-                    length: match[0].length
-                });
-            }
-            
-            // Remove chords from lyric line
-            lyricLine = line.replace(chordRegex, '');
-            
-            // Build chord line with proper spacing
-            let lastPosition = 0;
-            chordPositions.forEach(pos => {
-                // Calculate the position in the lyric line
-                // by subtracting the length of all chord markers before this position
-                let adjustedPosition = pos.position;
-                for (let i = 0; i < chordPositions.length; i++) {
-                    if (chordPositions[i].position < pos.position) {
-                        adjustedPosition -= chordPositions[i].length;
+            // Process each character in the line
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                
+                if (char === '[') {
+                    // Start of a chord
+                    inChord = true;
+                    currentChord = '';
+                } else if (char === ']' && inChord) {
+                    // End of a chord
+                    inChord = false;
+                    
+                    // Place the chord at the current position
+                    // We need to backfill with spaces if needed
+                    const spacesNeeded = chordPosition - chordLine.length;
+                    chordLine += ' '.repeat(spacesNeeded) + currentChord;
+                } else if (inChord) {
+                    // Collect chord characters
+                    currentChord += char;
+                } else {
+                    // Regular lyric character
+                    lyricLine += char;
+                    chordPosition++;
+                    
+                    // Add a space to chord line if we're not in a chord
+                    if (chordLine.length < chordPosition) {
+                        chordLine += ' ';
                     }
                 }
-                
-                // Add spaces to align with lyrics
-                chordLine += ' '.repeat(Math.max(0, adjustedPosition - lastPosition));
-                chordLine += pos.chord;
-                lastPosition = adjustedPosition + pos.chord.length;
-            });
+            }
+            
+            // Handle any remaining chord at the end of the line
+            if (inChord && currentChord) {
+                const spacesNeeded = chordPosition - chordLine.length;
+                chordLine += ' '.repeat(spacesNeeded) + currentChord;
+            }
             
             processedHTML += `<div class="chord-line">${chordLine}</div>`;
             processedHTML += `<div class="lyric-line">${lyricLine}</div>`;
@@ -604,36 +611,47 @@ document.addEventListener('DOMContentLoaded', function() {
                 yPosition += 5;
             } else {
                 // Extract chords and lyrics for PDF
-                const chordRegex = /\[([^\]]+)\]/g;
                 let chordLine = '';
-                let lyricLine = line.replace(chordRegex, '');
-                let chordPositions = [];
-                let match;
+                let lyricLine = '';
+                let currentChord = '';
+                let inChord = false;
+                let chordPosition = 0;
                 
-                // Find all chord positions
-                while ((match = chordRegex.exec(line)) !== null) {
-                    chordPositions.push({
-                        chord: match[1],
-                        position: match.index,
-                        length: match[0].length
-                    });
-                }
-                
-                // Build chord line for PDF
-                let lastPosition = 0;
-                chordPositions.forEach(pos => {
-                    // Calculate the position in the lyric line
-                    let adjustedPosition = pos.position;
-                    for (let i = 0; i < chordPositions.length; i++) {
-                        if (chordPositions[i].position < pos.position) {
-                            adjustedPosition -= chordPositions[i].length;
+                // Process each character in the line
+                for (let i = 0; i < line.length; i++) {
+                    const char = line[i];
+                    
+                    if (char === '[') {
+                        // Start of a chord
+                        inChord = true;
+                        currentChord = '';
+                    } else if (char === ']' && inChord) {
+                        // End of a chord
+                        inChord = false;
+                        
+                        // Place the chord at the current position
+                        const spacesNeeded = chordPosition - chordLine.length;
+                        chordLine += ' '.repeat(spacesNeeded) + currentChord;
+                    } else if (inChord) {
+                        // Collect chord characters
+                        currentChord += char;
+                    } else {
+                        // Regular lyric character
+                        lyricLine += char;
+                        chordPosition++;
+                        
+                        // Add a space to chord line if we're not in a chord
+                        if (chordLine.length < chordPosition) {
+                            chordLine += ' ';
                         }
                     }
-                    
-                    chordLine += ' '.repeat(Math.max(0, adjustedPosition - lastPosition));
-                    chordLine += pos.chord;
-                    lastPosition = adjustedPosition + pos.chord.length;
-                });
+                }
+                
+                // Handle any remaining chord at the end of the line
+                if (inChord && currentChord) {
+                    const spacesNeeded = chordPosition - chordLine.length;
+                    chordLine += ' '.repeat(spacesNeeded) + currentChord;
+                }
                 
                 // Add chord line to PDF
                 doc.setFontSize(10);
