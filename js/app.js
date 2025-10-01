@@ -29,6 +29,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const downloadPDF = document.getElementById('downloadPDF');
     const notification = document.getElementById('notification');
     
+    // PWA Install Button elements
+    const installBtn = document.getElementById('installBtn');
+    const installPrompt = document.getElementById('installPrompt');
+    
     // State
     let songs = [];
     let currentSong = null;
@@ -698,6 +702,83 @@ document.addEventListener('DOMContentLoaded', function() {
                 prevSong();
             }
         }
+    }
+    
+    // PWA Install Button functionality
+    let deferredPrompt;
+    
+    // Listen for the beforeinstallprompt event
+    window.addEventListener('beforeinstallprompt', (e) => {
+        // Prevent the mini-infobar from appearing on mobile
+        e.preventDefault();
+        // Stash the event so it can be triggered later
+        deferredPrompt = e;
+        // Show the install button
+        if (installBtn) {
+            installBtn.style.display = 'flex';
+        }
+        if (installPrompt) {
+            installPrompt.style.display = 'block';
+        }
+    });
+    
+    // Install button click event
+    if (installBtn) {
+        installBtn.addEventListener('click', () => {
+            // Show the install prompt
+            deferredPrompt.prompt();
+            // Wait for the user to respond to the prompt
+            deferredPrompt.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                    console.log('User accepted the install prompt');
+                    showNotification('App installed successfully!');
+                } else {
+                    console.log('User dismissed the install prompt');
+                }
+                // Hide the install button
+                installBtn.style.display = 'none';
+                if (installPrompt) {
+                    installPrompt.style.display = 'none';
+                }
+                deferredPrompt = null;
+            });
+        });
+    }
+    
+    // Hide the install button if the PWA is already installed
+    window.addEventListener('appinstalled', () => {
+        if (installBtn) {
+            installBtn.style.display = 'none';
+        }
+        if (installPrompt) {
+            installPrompt.style.display = 'none';
+        }
+        showNotification('Thank you for installing our app!');
+    });
+    
+    // Check if the app is running in standalone mode (already installed)
+    if (window.matchMedia('(display-mode: standalone)').matches || 
+        window.navigator.standalone === true) {
+        // App is running in standalone mode
+        if (installBtn) {
+            installBtn.style.display = 'none';
+        }
+        if (installPrompt) {
+            installPrompt.style.display = 'none';
+        }
+    }
+    
+    // Register service worker for PWA
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js')
+                .then(registration => {
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                })
+                .catch(error => {
+                    console.log('ServiceWorker registration failed: ', error);
+                });
+        });
     }
     
     // Initialize the app
